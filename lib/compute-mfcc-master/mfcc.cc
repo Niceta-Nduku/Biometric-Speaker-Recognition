@@ -262,7 +262,7 @@ public:
 
         // Check audio format
         if (hdr.AudioFormat != 1 || hdr.bitsPerSample != 16) {
-            std::cerr << "Unsupported audio format, use 16 bit PCM Wave" << std::endl;
+            std::cerr << "Unsupported audio format, use 16 bit PCM Wave ="<< hdr.bitsPerSample << std::endl;
             return 1;
         }
         // Check sampling rate

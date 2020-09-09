@@ -3,6 +3,7 @@
 *.la
 *.a
 *.lib
-compute-mfcc-master.zip
-eigen-3.3.7/
-eigen-3.3.7.tar.gz
+lib/compute-mfcc-master.zip
+lib/eigen-3.3.7/*
+lib/eigen-3.3.7.tar.gz
+lib/compute-mfcc-master/*
