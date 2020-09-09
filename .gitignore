@@ -4,5 +4,5 @@
 *.a
 *.lib
 compute-mfcc-master.zip
-eigen-3.3.7
+eigen-3.3.7/
 eigen-3.3.7.tar.gz
