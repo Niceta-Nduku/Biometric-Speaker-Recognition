@@ -7,3 +7,6 @@ lib/compute-mfcc-master.zip
 lib/eigen-3.3.7/*
 lib/eigen-3.3.7.tar.gz
 lib/compute-mfcc-master/*
+lib/HTK-3.5.beta-2.tar.gz
+lib/htk/*
+
