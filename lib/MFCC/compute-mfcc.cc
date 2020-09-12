@@ -21,10 +21,12 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include "mfcc.cc"
 
 // A simple option parser
-char* getCmdOption(char **begin, char **end, const std::string &value) {
+char *getCmdOption(char **begin, char **end, const std::string &value)
+{
     char **iter = std::find(begin, end, value);
     if (iter != end && ++iter != end)
         return *iter;
@@ -32,29 +34,38 @@ char* getCmdOption(char **begin, char **end, const std::string &value) {
 }
 
 // Process each file
-int processFile (MFCC &mfccComputer, const char* wavPath, const char* mfcPath) {
-    // Initialise input and output streams    
+int processFile(MFCC &mfccComputer, const char *wavPath, const char *mfcPath)
+{
+    // Initialise input and output streams
     std::ifstream wavFp;
     std::ofstream mfcFp;
-    
+
     // Check if input is readable
     wavFp.open(wavPath);
-    if (!wavFp.is_open()) {
+    if (!wavFp.is_open())
+    {
         std::cerr << "Unable to open input file: " << wavPath << std::endl;
         return 1;
     }
-    
+
     // Check if output is writable
     mfcFp.open(mfcPath);
-    if (!mfcFp.is_open()) {
+    if (!mfcFp.is_open())
+    {
         std::cerr << "Unable to open output file: " << mfcPath << std::endl;
         wavFp.close();
         return 1;
     }
-   
+
+    auto start = std::chrono::high_resolution_clock::now();
+
     // Extract and write features
-    if (mfccComputer.process (wavFp, mfcFp))
+    if (mfccComputer.process(wavFp, mfcFp))
         std::cerr << "Error processing " << wavPath << std::endl;
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = stop - start;
+    std::cout << "Time taken to extract and write = " << elapsed.count() << " s" << std::endl;
 
     wavFp.close();
     mfcFp.close();
@@ -62,34 +73,40 @@ int processFile (MFCC &mfccComputer, const char* wavPath, const char* mfcPath) {
 }
 
 // Process lists
-int processList (MFCC &mfccComputer, const char* wavListPath, const char* mfcListPath) {
+int processList(MFCC &mfccComputer, const char *wavListPath, const char *mfcListPath)
+{
     std::ifstream wavListFp, mfcListFp;
 
     // Check if wav list is readable
     wavListFp.open(wavListPath);
-    if (!wavListFp.is_open()) {
+    if (!wavListFp.is_open())
+    {
         std::cerr << "Unable to open input list: " << wavListPath << std::endl;
         return 1;
     }
 
     // Check if mfc list is readable
     mfcListFp.open(mfcListPath);
-    if (!mfcListFp.is_open()) {
+    if (!mfcListFp.is_open())
+    {
         std::cerr << "Unable to open output list: " << mfcListPath << std::endl;
         return 1;
     }
 
     // Process lists
     std::string wavPath, mfcPath;
-    while (true) {
-        std::getline (wavListFp, wavPath);
-        std::getline (mfcListFp, mfcPath);
-        if (wavPath.empty() || mfcPath.empty()) {
+    while (true)
+    {
+        std::getline(wavListFp, wavPath);
+        std::getline(mfcListFp, mfcPath);
+        if (wavPath.empty() || mfcPath.empty())
+        {
             wavListFp.close();
             mfcListFp.close();
             return 0;
         }
-        if (processFile (mfccComputer, wavPath.c_str(), mfcPath.c_str())) {
+        if (processFile(mfccComputer, wavPath.c_str(), mfcPath.c_str()))
+        {
             wavListFp.close();
             mfcListFp.close();
             return 1;
@@ -98,7 +115,8 @@ int processList (MFCC &mfccComputer, const char* wavListPath, const char* mfcLis
 }
 
 // Main
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     std::string USAGE = "compute-mfcc : MFCC Extractor\n";
     USAGE += "OPTIONS\n";
     USAGE += "--input           : Input 16 bit PCM Wave file\n";
@@ -118,24 +136,25 @@ int main(int argc, char* argv[]) {
     USAGE += "compute-mfcc --inputlist input.list --outputlist output.list\n";
     USAGE += "compute-mfcc --inputlist input.list --outputlist output.list --numcepstra 17 --samplingrate 44100\n";
 
-    char *wavPath = getCmdOption(argv, argv+argc, "--input");
-    char *mfcPath = getCmdOption(argv, argv+argc, "--output");
-    char *wavListPath = getCmdOption(argv, argv+argc, "--inputlist");
-    char *mfcListPath = getCmdOption(argv, argv+argc, "--outputlist");
-    char *numCepstraC = getCmdOption(argv, argv+argc, "--numcepstra");
-    char *numFiltersC = getCmdOption(argv, argv+argc, "--numfilters");
-    char *samplingRateC = getCmdOption(argv, argv+argc, "--samplingrate");
-    char *winLengthC = getCmdOption(argv, argv+argc, "--winlength");
-    char *frameShiftC = getCmdOption(argv, argv+argc, "--frameshift");
-    char *lowFreqC = getCmdOption(argv, argv+argc, "--lowfreq");
-    char *highFreqC = getCmdOption(argv, argv+argc, "--highfreq");
+    char *wavPath = getCmdOption(argv, argv + argc, "--input");
+    char *mfcPath = getCmdOption(argv, argv + argc, "--output");
+    char *wavListPath = getCmdOption(argv, argv + argc, "--inputlist");
+    char *mfcListPath = getCmdOption(argv, argv + argc, "--outputlist");
+    char *numCepstraC = getCmdOption(argv, argv + argc, "--numcepstra");
+    char *numFiltersC = getCmdOption(argv, argv + argc, "--numfilters");
+    char *samplingRateC = getCmdOption(argv, argv + argc, "--samplingrate");
+    char *winLengthC = getCmdOption(argv, argv + argc, "--winlength");
+    char *frameShiftC = getCmdOption(argv, argv + argc, "--frameshift");
+    char *lowFreqC = getCmdOption(argv, argv + argc, "--lowfreq");
+    char *highFreqC = getCmdOption(argv, argv + argc, "--highfreq");
 
     // Check arguments
-    if ((argc<3) || (!(wavPath && mfcPath) && !(wavListPath && mfcListPath))) {
+    if ((argc < 3) || (!(wavPath && mfcPath) && !(wavListPath && mfcListPath)))
+    {
         std::cout << USAGE;
         return 1;
     }
-    
+
     // Assign variables
     int numCepstra = (numCepstraC ? atoi(numCepstraC) : 12);
     int numFilters = (numFiltersC ? atoi(numFiltersC) : 40);
@@ -143,23 +162,28 @@ int main(int argc, char* argv[]) {
     int winLength = (winLengthC ? atoi(winLengthC) : 25);
     int frameShift = (frameShiftC ? atoi(frameShiftC) : 10);
     int lowFreq = (lowFreqC ? atoi(lowFreqC) : 50);
-    int highFreq = (highFreqC ? atoi(highFreqC) : samplingRate/2);
+    int highFreq = (highFreqC ? atoi(highFreqC) : samplingRate / 2);
 
+    auto start = std::chrono::high_resolution_clock::now();
     // Initialise MFCC class instance
-    MFCC mfccComputer (samplingRate, numCepstra, winLength, frameShift, numFilters, lowFreq, highFreq);
+    MFCC mfccComputer(samplingRate, numCepstra, winLength, frameShift, numFilters, lowFreq, highFreq);
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = stop - start;
+    std::cout << "Time taken to initalize = " << elapsed.count() << " s" << std::endl;
 
     // Process wav files
     if (wavPath && mfcPath)
-        if (processFile (mfccComputer, wavPath, mfcPath))
+        if (processFile(mfccComputer, wavPath, mfcPath))
+        {
+
             return 1;
+        }
 
     // Process lists
     if (wavListPath && mfcListPath)
-        if (processList (mfccComputer, wavListPath, mfcListPath))
+        if (processList(mfccComputer, wavListPath, mfcListPath))
             return 1;
 
     return 0;
 }
-
-
-

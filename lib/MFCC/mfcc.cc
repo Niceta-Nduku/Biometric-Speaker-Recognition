@@ -39,7 +39,6 @@
 
         initFilterbank();
         initHamDct();
-        compTwiddle();
     }
 
     std::string MFCC::processFrame(int16_t *samples, size_t N) {

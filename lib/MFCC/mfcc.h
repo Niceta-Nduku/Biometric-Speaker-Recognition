@@ -28,6 +28,8 @@
 #include<vector>
 #include<map>
 #include<math.h>
+#include<eigen3/Eigen/Core>
+#include<eigen3/unsupported/Eigen/FFT>
 #include"wavHeader.h"
 
 //TODO:: use eigen matrices
@@ -48,7 +50,6 @@ private:
     double preEmphCoef, lowFreq, highFreq;
     v_d frame, powerSpectralCoef, lmfbCoef, hamming, mfcc, prevsamples;
     m_d fbank, dct;
-    \
 
 private:
 
@@ -71,49 +72,6 @@ private:
     }
 
     /**
-     * Twiddle factor computation
-     */
-    void compTwiddle(void) {
-        const c_d J(0, 1);      // Imaginary number 'j'
-        for (int N = 2; N <= numFFT; N *= 2)
-            for (int k = 0; k <= N / 2 - 1; k++)
-                twiddle[N][k] = exp(-2 * PI * k / N * J);
-    }
-
-    /**
-     * Cooley-Tukey DIT-FFT recursive function
-     * @param x
-     * @return
-     */
-    v_c_d fft(v_c_d x) {
-        int N = x.size();
-        if (N == 1)
-            return x;
-
-        v_c_d xe(N / 2, 0), xo(N / 2, 0), Xjo, Xjo2;
-        int i;
-
-        // Construct arrays from even and odd indices
-        for (i = 0; i < N; i += 2)
-            xe[i / 2] = x[i];
-        for (i = 1; i < N; i += 2)
-            xo[(i - 1) / 2] = x[i];
-
-        // Compute N/2-point FFT
-        Xjo = fft(xe);
-        Xjo2 = fft(xo);
-        Xjo.insert(Xjo.end(), Xjo2.begin(), Xjo2.end());
-
-        // Butterfly computations
-        for (i = 0; i <= N / 2 - 1; i++) {
-            c_d t = Xjo[i], tw = twiddle[N][i];
-            Xjo[i] = t + tw * Xjo[i + N / 2];
-            Xjo[i + N / 2] = t - tw * Xjo[i + N / 2];
-        }
-        return Xjo;
-    }
-
-    /**
      * Pre-emphasis and Hamming window
      */
     void preEmphHam(void) {
@@ -127,9 +85,12 @@ private:
      * Power spectrum computation
      */
     void computePowerSpec(void) {
+        Eigen::initParallel();
         frame.resize(numFFT); // Pads zeros
         v_c_d framec(frame.begin(), frame.end()); // Complex frame
-        v_c_d fftc = fft(framec);
+        v_c_d fftc;
+        Eigen::FFT<double> fft;
+        fft.fwd(fftc,frame);
 
         for (int i = 0; i < numFFTBins; i++)
             powerSpectralCoef[i] = pow(abs(fftc[i]), 2);
@@ -264,8 +225,8 @@ private:
      * @param lf Filterbank low frequency cutoff in Hertz
      * @param hf Filterbank high frequency cutoff in Hertz
      */
-    MFCC(int sampFreq = 16000, int nCep = 12, int winLength = 25, int frameShift = 10, int numFilt = 40, double lf = 50,
-         double hf = 6500);
+    MFCC(int sampFreq, int nCep, int winLength, int frameShift, int numFilt, double lf,
+         double hf);
     /**
      * Process each frame and extract MFCC
      * @param samples

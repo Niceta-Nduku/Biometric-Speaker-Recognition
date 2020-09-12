@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include "mfcc.cc"
 
 // A simple option parser
@@ -51,10 +52,16 @@ int processFile (MFCC &mfccComputer, const char* wavPath, const char* mfcPath) {
         wavFp.close();
         return 1;
     }
+
+    auto start = std::chrono::high_resolution_clock::now();
    
     // Extract and write features
     if (mfccComputer.process (wavFp, mfcFp))
         std::cerr << "Error processing " << wavPath << std::endl;
+    
+    auto stop = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = stop - start;
+    std::cout << "Time taken to extract and write = " << elapsed.count() << " s" << std::endl;
 
     wavFp.close();
     mfcFp.close();
@@ -145,13 +152,21 @@ int main(int argc, char* argv[]) {
     int lowFreq = (lowFreqC ? atoi(lowFreqC) : 50);
     int highFreq = (highFreqC ? atoi(highFreqC) : samplingRate/2);
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     // Initialise MFCC class instance
     MFCC mfccComputer (samplingRate, numCepstra, winLength, frameShift, numFilters, lowFreq, highFreq);
+    
+    auto stop = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = stop - start;
+    std::cout << "Time taken to initalize = " << elapsed.count() << " s" << std::endl;
 
     // Process wav files
     if (wavPath && mfcPath)
-        if (processFile (mfccComputer, wavPath, mfcPath))
+        if (processFile (mfccComputer, wavPath, mfcPath)){
+            
             return 1;
+        }
 
     // Process lists
     if (wavListPath && mfcListPath)

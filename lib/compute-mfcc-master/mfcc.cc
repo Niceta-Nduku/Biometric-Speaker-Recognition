@@ -105,7 +105,7 @@ private:
         frame.resize(numFFT); // Pads zeros
         v_c_d framec (frame.begin(), frame.end()); // Complex frame
         v_c_d fftc = fft(framec);
-    
+
         for (int i=0; i<numFFTBins; i++)
             powerSpectralCoef[i] = pow(abs(fftc[i]),2);
     }
