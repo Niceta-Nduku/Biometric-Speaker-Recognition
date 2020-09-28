@@ -19,32 +19,35 @@ class Recorder(object):
         self.CHANNELS = CHANNELS
         self.RATE = RATE
         self.p = pyaudio.PyAudio()
-        self.stream = p.open(format=FORMAT,channels=CHANNELS,rate=RATE,input=True,output=True,frames_per_buffer=CHUNK)
+        self.stream = self.p.open(format=FORMAT,channels=CHANNELS,rate=RATE,input=True,output=True,frames_per_buffer=CHUNK)
         self.frames = []
-        self.stop = False
 
-    def start(self,RECORD_SECONDS = 15, wait_to_stop = False):
+    def start(self,RECORD_SECONDS = 5, wait_to_stop = False, playback = False):
         print("Recording...")
 
         if(wait_to_stop):
-            while(stop):
-                data = stream.read(CHUNK)
+            while(True):
+                data = self.stream.read(self.CHUNK)
                 # self.stream.write(data)
                 self.frames.append(data)
-            stop()
+
         else:
             for i in range(0, int(self.RATE / self.CHUNK * RECORD_SECONDS)):
-                data = stream.read(CHUNK)
-                # self.stream.write(data)
+                data = self.stream.read(self.CHUNK)
                 self.frames.append(data)
-            stop()
+
+        if(playback):
+            self.save()
+            self.play()
+            
+        self.stop()
 
         
     def stop(self):
         """
         Stop recording
         """
-        print("Stopping")
+        print("Stopping..")
         self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()
@@ -59,35 +62,28 @@ class Recorder(object):
         wf.close()
 
     def play(self,WAVE_INPUT_FILENAME = "output.wav"):
-
+        print("Playing back..")
         wf = wave.open(WAVE_INPUT_FILENAME, 'rb')
-
-        stream = p.open(format = self.p.get_format_from_width(wf.getsampwidth()),
-                        channels = wf.getnchannels(),
-                        rate = wf.getframerate(),
-                        output = True)
-
         data = wf.readframes(self.CHUNK)
 
         while data != '':
-            stream.write(data)
+            self.stream.write(data)
             data = wf.readframes(self.CHUNK)
 
-        stream.close()
-        p.terminate()
-
+        wf.close()
+        self.stop()
 
 if __name__ == "__main__":
 
-    output_file = input("Enter output file")
 
-    Recorder
+    recorder = Recorder()
 
-    ready = input("press s to start")
+    ready = input("press s to start\n")
 
     while(not ready):
         continue
 
+    recorder.start(playback=True)
     
 
 

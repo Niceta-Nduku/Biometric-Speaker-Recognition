@@ -5,10 +5,11 @@ from scipy.io import wavfile
 from python_speech_features import mfcc
 from hmmlearn.hmm import GMMHMM
 
-def trainUBM(input_folder):
+def loadData(input_folder):
     """
     Function to load recordings to train 
     """
+    training_data = {}
 
     for dirname in os.listdir(input_folder):
 
@@ -31,10 +32,13 @@ def trainUBM(input_folder):
 
             print(speaker)
 
+            x = np.array([])
+
             for filename in [x for x in os.listdir(speaker_folder) if x.endswith('.wav')][:-1]:
 
                 filepath = os.path.join(speaker_folder,filename)
                 sampling_rate, audio_signal = wavfile.read(filepath)
+                
 
 def enroll_speaker
 
