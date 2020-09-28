@@ -7,8 +7,8 @@ from hmmlearn import hmm
 
 def build_arg_parser():
     parser = argparse.ArgumentParser(description='Train')
-    parser.add_argument("--train-folder",dest="train-folder",required=True,help="Input folder with audio for training files",
-    "--test-folder",dest="test-folder",required=True,help="Input folder with audio files for testing")
+    parser.add_argument("--train-folder",dest="train_folder",required=True,help="Input folder with audio for training files")
+    parser.add_argument("--test-folder",dest="test_folder",required=False,help="Input folder with audio files for testing")
 
     return parser
 
@@ -37,12 +37,37 @@ class HMMTrain(object):
     def get_score(self,input):
         self.model.score(input)
 
-if __name__ == if __name__ == "__main__":
+if __name__ == "__main__":
     args = build_arg_parser().parse_args()
-    input_folder = args
+    input_folder = args.train_folder
+
 
     hmm_models = []
 
     for dirname in os.listdir(input_folder):
 
-        
+        digit_folder = os.path.join(input_folder,dirname)
+
+        if not os.path.isdir(digit_folder):
+            continue
+
+        digit = digit_folder[-1]
+
+        print(digit)
+
+        for speaker in os.listdir(digit_folder):
+
+            speaker_folder =  os.path.join(digit_folder,speaker)
+            
+            s = speaker_folder.split('\\')
+
+            speaker_name = s[-1]
+
+            print(speaker)
+
+            for filename in [x for x in os.listdir(speaker_folder) if x.endswith('.wav')][:-1]:
+
+                filepath = os.path.join(speaker_folder,filename)
+                sampling_rate, audio_signal = wavfile.read(filepath)
+
+                

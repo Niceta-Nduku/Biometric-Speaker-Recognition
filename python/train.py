@@ -5,36 +5,38 @@ from scipy.io import wavfile
 from python_speech_features import mfcc
 from hmmlearn.hmm import GMMHMM
 
-def loadData(folder):
+def trainUBM(input_folder):
     """
     Function to load recordings to train 
     """
 
-    #open folder
-    #for each subfolder, (check if digit corresponds)
-    #      read in wav file (check if digit corresponds)
-    #      extract  features
-    #      append to array of features
-    #      append label (name_number)
-    #
+    for dirname in os.listdir(input_folder):
 
+        digit_folder = os.path.join(input_folder,dirname)
 
+        if not os.path.isdir(digit_folder):
+            continue
 
-class HMMTrain(object):
-    def __init__(self, n_states=8, n_gaussians=8, cov_type='diag', n_iter=1000):
-        self.n_states = n_states
-        self.n_gaussians = n_gaussians
-        self.cov_type = cov_type
-        self.n_iter = n_iter
-        self.models = [] 
-    
-        self.model = GMMHMM(n_components=self.n_states,n_mix=self.n_gaussians, n_iter=self.n_iter)
+        digit = digit_folder[-1]
 
-    def train(self,X):
-        self.models.append(self.model.fit(X))
+        print(digit)
 
-    def get_score(self):
-        self.model.score(input)
+        for speaker in os.listdir(digit_folder):
 
-if __name__ == if __name__ == "__main__":
+            speaker_folder =  os.path.join(digit_folder,speaker)
+            
+            s = speaker_folder.split('\\')
+
+            speaker_name = s[-1]
+
+            print(speaker)
+
+            for filename in [x for x in os.listdir(speaker_folder) if x.endswith('.wav')][:-1]:
+
+                filepath = os.path.join(speaker_folder,filename)
+                sampling_rate, audio_signal = wavfile.read(filepath)
+
+def enroll_speaker
+
+if __name__ == "__main__":
     pass
