@@ -38,9 +38,8 @@ def loadData(input_folder):
 
                 filepath = os.path.join(speaker_folder,filename)
                 sampling_rate, audio_signal = wavfile.read(filepath)
+
+
                 
-
-def enroll_speaker
-
 if __name__ == "__main__":
     pass
