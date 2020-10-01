@@ -6,3 +6,5 @@ def extract_features():
     pass
 def verifySpeaker():
     pass
+def phrase_prompt():
+    pass

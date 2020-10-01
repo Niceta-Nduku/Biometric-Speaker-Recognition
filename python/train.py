@@ -2,42 +2,58 @@ import os
 import argparse
 import numpy as np
 from scipy.io import wavfile
-from python_speech_features import mfcc
-from hmmlearn.hmm import GMMHMM
+import python.features as mfcc
+from sklearn.mixture import GaussianMixture
+# from hmmlearn.hmm import GMMHMM
 
-def loadData(input_folder):
-    """
-    Function to load recordings to train 
-    """
-    training_data = {}
+class trainUBM():
 
-    for dirname in os.listdir(input_folder):
+    def __init__(self,num_coef):
 
-        digit_folder = os.path.join(input_folder,dirname)
+        self.digit = {} #digit UBM
 
-        if not os.path.isdir(digit_folder):
-            continue
+        
+    def loadData(self, input_folder):
+        """
+        Function to load recordings to train 
+        """
 
-        digit = digit_folder[-1]
+        for dirname in os.listdir(input_folder):
 
-        print(digit)
+            digit_folder = os.path.join(input_folder,dirname)
 
-        for speaker in os.listdir(digit_folder):
+            if not os.path.isdir(digit_folder):
+                continue
 
-            speaker_folder =  os.path.join(digit_folder,speaker)
-            
-            s = speaker_folder.split('\\')
+            ubm = GaussianMixture(n_components=8,covariance_type='diag')
 
-            speaker_name = s[-1]
 
-            print(speaker)
+            for speaker in os.listdir(digit_folder):
 
-            x = np.array([])
+                speaker_folder =  os.path.join(digit_folder,speaker)
+                
+                s = speaker_folder.split('\\')
 
-            for filename in [x for x in os.listdir(speaker_folder) if x.endswith('.wav')][:-1]:
+                features = np.asarray(())
 
-                filepath = os.path.join(speaker_folder,filename)
-                sampling_rate, audio_signal = wavfile.read(filepath)
+                for filename in [x for x in os.listdir(speaker_folder) if x.endswith('.wav')][:-1]:
+
+                    filepath = os.path.join(speaker_folder,filename)
+                    sampling_rate, audio_signal = wavfile.read(filepath)
+
+                    feat = mfcc.getMFCC(audio_signal,sampling_rate)
+
+                    if features.size == 0:
+                        features = feat
+                    else:
+                        features = np.vstack((features, feat))
+
+            ubm.fit(features) 
+            features = np.asarray(())
+            self.digit[dirname] = ubm    
+
+
+
 
 
                 
