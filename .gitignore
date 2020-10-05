@@ -5,3 +5,6 @@ lib/eigen-3.3.7.tar.gz
 lib/HTK-3.5.beta-2.tar.gz
 lib/htk/*
 
+data/*
+free-digit-recordings/*
+

@@ -50,25 +50,24 @@ class UBM(object):
             self.digit_features[dirname] = all_speaker_features
         
     
-
     def trainUBM(self):
 
         for digit in self.digit_features:
             digit_hmm = hmm.GMMHMM(n_components=8, n_iter=100, init_params="smt", covariance_type='diag',algorithm="viterbi")
-            digit_gmms = []
-            for speaker in self.digit_features[digit]:
-                speaker_gmm = skm.GaussianMixture(n_components=8,covariance_type='diag')
-                speaker_gmm.fit(speaker)
-                digit_gmms.append(speaker_gmm)
             
-            digit_hmm.gmm_ = digit_gmms
+            for speaker in digit_features[digit]:
+                digit_hmm.fit(speaker)
             self.all_digit_UBM[digit] = digit_hmm
 
-    def saveUBM(self):
+    def saveUBM(self,filename):
+
         pass
 
-    def loadUBM(self):
+    def loadUBM(self,filename):
         pass    
+
+    def getUBM(self):
+        return self.all_digit_UBM
 
 
 

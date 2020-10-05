@@ -1,6 +1,8 @@
 import pyaudio
 import wave
 from scipy.io import wavfile
+import sys
+import os
 
 class Recorder(object):
 
@@ -23,7 +25,7 @@ class Recorder(object):
         self.frames = []
 
     def start(self,RECORD_SECONDS = 5, wait_to_stop = False, playback = False, WAVE_OUTPUT_FILENAME = "output.wav"):
-        print("Recording...")
+        print("Start...")
 
         if(wait_to_stop):
             while(True):
@@ -44,6 +46,7 @@ class Recorder(object):
         self.save(WAVE_OUTPUT_FILENAME)
 
     def save(self,output_file):
+        
         wf = wave.open(output_file, 'wb')
         wf.setnchannels(self.CHANNELS)
         wf.setsampwidth(self.p.get_sample_size(self.FORMAT))
@@ -69,24 +72,11 @@ class Recorder(object):
         """
         Stop recording
         """
-        print("Stopping..")
+        print("Done..")
         self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()
     
 
 if __name__ == "__main__":
-
-
-    recorder = Recorder()
-    fileToSave = input("Enter file to save to:\n")
-    seconds = input("enter seconds: ")
-    ready = input("press s to start\n")
-
-    while(ready != 's'):
-        ready = input("press s to start\n")
-
-    recorder.start(RECORD_SECONDS=int(seconds),playback=True,WAVE_OUTPUT_FILENAME=fileToSave)
-    
-
-
+    pass
