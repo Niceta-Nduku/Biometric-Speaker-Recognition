@@ -1,10 +1,8 @@
-import Record as r
-import say_numbers_prompt as prompter
 import sys
 import time
 import os
-import Validate
-from enroll import enroll
+import Validate as ver
+import enroll as en
 
 # digit prompter
 SECONDS = 30
@@ -29,11 +27,18 @@ if not os.path.isdir(folderToSave):
 print("\n\nYou will be given 10 numbers(0-9) repeated 5 times in random order.\n\n"
     "Read the numbers with yout normal speaking voice but with a very short break between numbers")
 
-new_speaker = enroll.enroll(Speaker_id)
+new_speaker = en.enroll(Speaker_id)
 
+start = time.time()
 new_speaker.record(folderToSave)
+stop = time.time()
 
-print("Thank you.\n\n You will now be prompted with a 6 digit string.")
+print("\n\nRecording took {seconds}".format(seconds=(stop-start)))
+
+
+print("Thank you.\n\n You will now be prompted with random digit strings.")
+
+promted = ver.Verify()
 
 ready = input("\npress s to start\n")
 

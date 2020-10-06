@@ -40,7 +40,7 @@ class Recorder(object):
 
         if(playback):
             self.save(WAVE_OUTPUT_FILENAME)
-            self.play()
+            self.play(WAVE_OUTPUT_FILENAME)
             
         self.stop()
         self.save(WAVE_OUTPUT_FILENAME)
@@ -79,4 +79,13 @@ class Recorder(object):
     
 
 if __name__ == "__main__":
-    pass
+    
+    recorder = Recorder()
+
+    ready = input("\npress s to start\n")
+
+    while(ready != 's'):
+        ready = input("press s to start\n")
+
+    recorder.start(RECORD_SECONDS=10, playback=True,
+                    WAVE_OUTPUT_FILENAME="testmic.wav")

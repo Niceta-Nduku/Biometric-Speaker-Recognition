@@ -3,10 +3,11 @@ import os
 import argparse
 import numpy as np
 from scipy.io import wavfile
-import python.features as mfcc
+import features as mfcc
 import sklearn.mixture as skm
 from hmmlearn import hmm
 import say_numbers_prompt as prompter
+import Record as r
 
 class enroll(object):
     """
