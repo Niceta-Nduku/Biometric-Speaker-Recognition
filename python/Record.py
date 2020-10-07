@@ -22,6 +22,9 @@ class Recorder(object):
         self.RATE = RATE
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=FORMAT,channels=CHANNELS,rate=RATE,input=True,output=True,frames_per_buffer=CHUNK)
+        
+        # self.dev_index =  0 #uncomment when running on pi
+
         self.frames = []
 
     def start(self,RECORD_SECONDS = 5, wait_to_stop = False, playback = False, WAVE_OUTPUT_FILENAME = "output.wav"):
@@ -87,5 +90,5 @@ if __name__ == "__main__":
     while(ready != 's'):
         ready = input("press s to start\n")
 
-    recorder.start(RECORD_SECONDS=10, playback=True,
+    recorder.start(RECORD_SECONDS=6, playback=True,
                     WAVE_OUTPUT_FILENAME="testmic.wav")

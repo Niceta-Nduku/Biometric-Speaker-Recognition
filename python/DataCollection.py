@@ -8,6 +8,7 @@ import enroll as en
 SECONDS = 30
 DATA_FOLDER = "data/"
 ALL_DIGITS = "digits"
+PHRASES ="phrases"
 
 
 if (len(sys.argv) > 1):
@@ -38,12 +39,28 @@ print("\n\nRecording took {seconds}".format(seconds=(stop-start)))
 
 print("Thank you.\n\n You will now be prompted with random digit strings.")
 
-promted = ver.Verify()
+folderToSave_prompt =  DATA_FOLDER+speaker_folder+PHRASES
+promted = ver.Verify(Speaker_id)
 
-ready = input("\npress s to start\n")
+start = time.time()
+for i in range(3):
+    
+    ready = input("Recording for no noise {} \npress s to start\n".format(i))
 
-while(ready != 's'):
-    ready = input("press s to start\n")
+    while(ready != 's'):
+        ready = input("press s to start\n")
+
+    promted.record(folderToSave_prompt, environment="s")
+
+
+for i in range(3):
+    
+    ready = input("Recording for noisy environment {} \npress s to start\n".format(i))
+
+    while(ready != 's'):
+        ready = input("press s to start\n")
+
+    promted.record(folderToSave_prompt,environment="n"+i)
 
 
 
