@@ -1,79 +1,78 @@
 import os
-import argparse
 import numpy as np
 from scipy.io import wavfile
-import python.features as mfcc
-import sklearn.mixture as skm
-from hmmlearn import hmm
+import features as mfcc
+from sklearn.mixture import GaussianMixture
+import pickle
 
 class UBM(object):
 
-    def __init__(self,num_coef):
+    def __init__(self,num_coef=64,outputfile="UBM"):
+        """
+
+        Args:
+            num_coef (int, optional): number of gaussian components. Defaults to 64.
+            outputfile (str, optional): file to save UBM. Defaults to "UBM.t".
+        """
 
         self.digit_features = {}
         self.all_digit_UBM = {}
+        self.num_components = num_coef
+        self.file_to_save = outputfile
+        
 
-    def loadtrainingfeatures(self,input_folder):
+    def loadtrainingfeatures(self,files):
+        """
+        Extract features to train UBM
 
-        self.digit_features = {}
+        Args:
+            files (dict): dictionay (key - digit, value - .wav files)
+        """
 
-        for dirname in os.listdir(input_folder):
-
-            digit_folder = os.path.join(input_folder,dirname)
-
-            if not os.path.isdir(digit_folder):
-                continue
-
+        for d in files:
+        
             all_speaker_features  = []
 
-            for speaker in os.listdir(digit_folder):
+            for filename in files[d]:
 
-                speaker_folder =  os.path.join(digit_folder,speaker)
+                sampling_rate, audio_signal = wavfile.read(filename)
 
+                feat = mfcc.getMFCC(audio_signal,sampling_rate)
 
-                features = np.asarray(())
+                all_speaker_features.append(feat)
 
-                for filename in [x for x in os.listdir(speaker_folder) if x.endswith('.wav')][:5]:
-
-                    filepath = os.path.join(speaker_folder,filename)
-                    sampling_rate, audio_signal = wavfile.read(filepath)
-
-                    feat = mfcc.getMFCC(audio_signal,sampling_rate)
-
-                    if features.size == 0:
-                        features = feat
-                    else:
-                        features = np.vstack((features, feat))
-
-                all_speaker_features.append(features)
-
-            self.digit_features[dirname] = all_speaker_features
+            self.digit_features[d] = all_speaker_features
         
     
     def trainUBM(self):
 
         for digit in self.digit_features:
-            digit_hmm = hmm.GMMHMM(n_components=8, n_iter=100, init_params="smt", covariance_type='diag',algorithm="viterbi")
+            digit_gmm = GaussianMixture(n_components=self.num_components,covariance_type='diag')
+        
+            lengths = []
             
-            for speaker in digit_features[digit]:
-                digit_hmm.fit(speaker)
-            self.all_digit_UBM[digit] = digit_hmm
+            X = []
+            for u in self.digit_features[digit]:
+                lengths.append(len(u))
+                if len(X) == 0:
+                    X = u
+                else:
+                    X = np.concatenate([X, u])
+                    
+            digit_gmm.fit(X)
 
-    def saveUBM(self,filename):
+            self.all_digit_UBM[digit] = digit_gmm  
 
-        pass
+    def saveUBM(self):    
+        pickle.dump(self.all_digit_UBM,open(self.file_to_save,"wb"))
 
-    def loadUBM(self,filename):
-        pass    
+    def loadUBM(self):
+        self.all_digit_UBM = pickle.load(open(self.file_to_save,"rb"))    
 
     def getUBM(self):
-        return self.all_digit_UBM
+        return self.all_digit_UBM 
+    
 
-
-
-
-
-
-                
+        
 if __name__ == "__main__":
     pass

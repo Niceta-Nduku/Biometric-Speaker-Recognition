@@ -85,10 +85,12 @@ if __name__ == "__main__":
     
     recorder = Recorder()
 
-    ready = input("\npress s to start\n")
+    filename = input("file:" )
+
+    ready = input("\npress s to start\n")    
 
     while(ready != 's'):
         ready = input("press s to start\n")
 
-    recorder.start(RECORD_SECONDS=6, playback=True,
-                    WAVE_OUTPUT_FILENAME="testmic.wav")
+    recorder.start(RECORD_SECONDS=10, playback=True,
+                    WAVE_OUTPUT_FILENAME=filename)
