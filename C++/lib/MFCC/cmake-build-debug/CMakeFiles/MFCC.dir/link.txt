@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMFCC.a  CMakeFiles/MFCC.dir/library.cpp.o
-/usr/bin/ranlib libMFCC.a

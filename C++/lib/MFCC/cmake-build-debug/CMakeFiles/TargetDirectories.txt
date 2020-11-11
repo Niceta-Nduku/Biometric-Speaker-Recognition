@@ -1,3 +1,0 @@
-/home/ponyo/UCT/EEE4022S/development/lib/MFCC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/ponyo/UCT/EEE4022S/development/lib/MFCC/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/ponyo/UCT/EEE4022S/development/lib/MFCC/cmake-build-debug/CMakeFiles/MFCC.dir

@@ -49,20 +49,30 @@ def getSpeakerFeatures(speaker_file,numfeatures = 13):
         for i in range(utterances):
             
             sampling_rate, audio_signal = wavfile.read(speaker_file[d][i])
-            feat = mfcc.getMFCC(audio_signal,sampling_rate,trimSilence=True,NUM_FEAT=numfeatures)          
+            feat = mfcc.getMFCC(audio_signal, sampling_rate, single_phrase=True, mutliple_phrases = False, NUM_FEAT=numfeatures, ENERGY = True , Delta = False)
+
             digit_features.append(feat)
             
-        speaker_features[d] = np.array(digit_features)
+        speaker_features[str(d)] = np.array(digit_features,dtype=object)
     return speaker_features   
 
-def adapt_all_digits(ubm,speaker_features):
+def adapt_all_digits(ubm,speaker_features,ubm_type = 'd'):
     speaker_model ={}
-
-    for i in range(10):
-        s_gmm = ubm[i]
-        for u in speaker_features[i]:
-            s_gmm = utils.map_adaptation(s_gmm, u, max_iterations = 10, likelihood_threshold = 1e-20, relevance_factor = 16)
-        speaker_model[i] = s_gmm
+    if ubm_type == 'd':
+        for i in range(10):
+            s_gmm = ubm[str(i)]
+            for u in speaker_features[str(i)]:
+                s_gmm = utils.map_adaptation(s_gmm, u, max_iterations = 10, likelihood_threshold = 1e-20, relevance_factor = 16)
+            speaker_model[str(i)] = s_gmm
+    else:
+        s_gmm = ubm
+        for i in range(10):            
+            for u in speaker_features[str(i)]:
+                s_gmm = utils.map_adaptation(s_gmm, u, max_iterations = 10, likelihood_threshold = 1e-20, relevance_factor = 16)
+            speaker_model[str(i)] = s_gmm
 
     return speaker_model
 
+def setThreshld():
+    
+    pass

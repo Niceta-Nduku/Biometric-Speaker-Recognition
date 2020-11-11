@@ -7,4 +7,5 @@ lib/htk/*
 
 data/*
 free-digit-recordings/*
+.ipynb_checkpoints/*
 

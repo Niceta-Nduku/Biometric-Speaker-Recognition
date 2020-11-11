@@ -11,4 +11,4 @@ mkdir phrases
 cd ..
 cd ..
 
-python python Python/Record.py niceta
+python Python/DataCollection.py $name
